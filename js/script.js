@@ -108,6 +108,7 @@ function buildPayload(form) {
   const zipCode = formData.get("zipCode").trim();
   const bookEstimate = formData.get("bookEstimate");
   const largeCollection = formData.get("largeCollection") === "on" ? "Yes" : "No";
+  const clothingPickup = formData.get("clothingPickup") === "on" ? "Yes" : "No";
   const comments = formData.get("comments").trim();
   const message = [
     `Name: ${firstName} ${lastName}`,
@@ -117,6 +118,7 @@ function buildPayload(form) {
     `ZIP Code: ${zipCode || "Not provided"}`,
     `Estimated Number of Books: ${bookEstimate || "Not provided"}`,
     `Large Collection: ${largeCollection}`,
+    `Unwanted Clothing Pickup: ${clothingPickup}`,
     "",
     "Comments:",
     comments || "Not provided"
@@ -137,6 +139,7 @@ function buildPayload(form) {
     "ZIP Code": zipCode,
     "Estimated Number of Books": bookEstimate,
     "Large Collection": largeCollection,
+    "Unwanted Clothing Pickup": clothingPickup,
     Comments: comments
   };
 }
