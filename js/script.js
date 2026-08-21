@@ -41,6 +41,14 @@ if (currentYear) {
   currentYear.textContent = new Date().getFullYear();
 }
 
+function trackEvent(eventName, parameters = {}) {
+  if (typeof window.gtag !== "function") {
+    return;
+  }
+
+  window.gtag("event", eventName, parameters);
+}
+
 function closeMobileMenu() {
   if (!navToggle || !navMenu) {
     return;
@@ -222,14 +230,39 @@ if (thirdPartyAuthority) {
 navLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
     const href = link.getAttribute("href");
+    const analyticsEvent = link.dataset.analyticsEvent;
 
     if (!href || !href.startsWith("#")) {
       return;
     }
 
     event.preventDefault();
+
+    if (analyticsEvent) {
+      trackEvent(analyticsEvent, {
+        link_text: link.textContent.trim(),
+        link_url: href
+      });
+    }
+
     closeMobileMenu();
     scrollToTarget(href);
+  });
+});
+
+document.querySelectorAll("a[href^='tel:'], a[href^='mailto:'], a[href^='sms:']").forEach((link) => {
+  link.addEventListener("click", () => {
+    const href = link.getAttribute("href") || "";
+    const eventName = href.startsWith("tel:")
+      ? "phone_click"
+      : href.startsWith("mailto:")
+        ? "email_click"
+        : "sms_click";
+
+    trackEvent(eventName, {
+      link_text: link.textContent.trim(),
+      link_url: href
+    });
   });
 });
 
@@ -278,6 +311,14 @@ if (pickupForm) {
 
     try {
       await submitPickupRequest(payload);
+
+      trackEvent("pickup_request_submit", {
+        book_estimate: payload["Estimated Number of Books"] || "Not provided",
+        city_town_provided: payload["City / Town"] ? "Yes" : "No",
+        zip_code_provided: payload["ZIP Code"] ? "Yes" : "No",
+        large_collection: payload["Large Collection"],
+        unwanted_clothing_pickup: payload["Unwanted Clothing Pickup"]
+      });
 
       pickupForm.reset();
       syncAuthorityRelationship();
