@@ -554,15 +554,55 @@ h3 {
 }
 
 .service-area-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: clamp(1.5rem, 4vw, 3rem);
 }
 
 .service-area h2 {
-  max-width: 760px;
   color: var(--white);
+}
+
+.service-area .eyebrow {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.service-area-copy p {
+  margin: 1rem 0 0;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.service-area-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.service-area-groups article {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-small);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+}
+
+.service-area-groups h3 {
+  margin: 0 0 0.7rem;
+  color: var(--white);
+  font-size: 1rem;
+}
+
+.service-area-groups ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.service-area .button {
+  justify-self: start;
 }
 
 .faq-section {
@@ -687,6 +727,37 @@ textarea:focus {
 .checkbox-field label {
   margin: 0;
   line-height: 1.45;
+}
+
+.form-section {
+  margin: 1.2rem 0;
+  border-top: 1px solid rgba(36, 69, 54, 0.14);
+  padding-top: 1.2rem;
+}
+
+.form-section h3 {
+  margin: 0 0 0.85rem;
+  color: var(--forest-dark);
+  font-size: 1.15rem;
+}
+
+.form-note,
+.privacy-note {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.form-note {
+  margin: -0.65rem 0 1.1rem 2.65rem;
+}
+
+.privacy-note {
+  margin: 1rem 0 1.25rem;
+  border: 1px solid rgba(111, 143, 99, 0.28);
+  border-radius: 12px;
+  background: rgba(111, 143, 99, 0.1);
+  padding: 0.85rem 1rem;
 }
 
 .form-button {
@@ -837,7 +908,11 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
-  .service-area-inner,
+  .service-area-inner {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
   .footer-inner {
     align-items: stretch;
     flex-direction: column;
@@ -849,6 +924,10 @@ textarea:focus {
 }
 
 @media (max-width: 520px) {
+  .service-area-groups {
+    grid-template-columns: 1fr;
+  }
+
   .brand-mark {
     width: 40px;
     height: 40px;
