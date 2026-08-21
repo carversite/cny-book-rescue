@@ -5,6 +5,9 @@ const pickupForm = document.querySelector("#pickup-form");
 const successMessage = document.querySelector("#form-success");
 const errorMessage = document.querySelector("#form-error");
 const currentYear = document.querySelector("#current-year");
+const thirdPartyAuthority = document.querySelector("#thirdPartyAuthority");
+const authorityRelationshipField = document.querySelector("#authorityRelationshipField");
+const authorityRelationship = document.querySelector("#authorityRelationship");
 
 const validators = {
   firstName(value) {
@@ -28,6 +31,9 @@ const validators = {
     const zipPattern = /^\d{5}(-\d{4})?$/;
 
     return !trimmed || zipPattern.test(trimmed) ? "" : "Please enter a valid ZIP code.";
+  },
+  ownershipTransferConfirmed(value, field) {
+    return field.checked ? "" : "Please confirm that you own or have authority to provide these items.";
   }
 };
 
@@ -79,14 +85,14 @@ function setFieldError(field, message) {
 
 function validateField(field) {
   const validator = validators[field.name];
-  const message = validator ? validator(field.value) : "";
+  const message = validator ? validator(field.value, field) : "";
 
   setFieldError(field, message);
   return !message;
 }
 
 function validateForm(form) {
-  const fieldsToValidate = form.querySelectorAll("[name='firstName'], [name='lastName'], [name='email'], [name='zipCode']");
+  const fieldsToValidate = form.querySelectorAll("[name='firstName'], [name='lastName'], [name='email'], [name='zipCode'], [name='ownershipTransferConfirmed']");
   let isValid = true;
 
   fieldsToValidate.forEach((field) => {
@@ -98,8 +104,27 @@ function validateForm(form) {
   return isValid;
 }
 
+function syncAuthorityRelationship() {
+  if (!thirdPartyAuthority || !authorityRelationshipField || !authorityRelationship) {
+    return;
+  }
+
+  const shouldShow = thirdPartyAuthority.checked;
+
+  authorityRelationshipField.hidden = !shouldShow;
+
+  if (!shouldShow) {
+    authorityRelationship.value = "";
+    setFieldError(authorityRelationship, "");
+  }
+}
+
 function buildPayload(form) {
   const formData = new FormData(form);
+  const checkboxValue = (fieldName) => {
+    const field = form.elements[fieldName];
+    return field && field.checked ? "Yes" : "No";
+  };
   const firstName = formData.get("firstName").trim();
   const lastName = formData.get("lastName").trim();
   const email = formData.get("email").trim();
@@ -107,8 +132,11 @@ function buildPayload(form) {
   const cityTown = formData.get("cityTown").trim();
   const zipCode = formData.get("zipCode").trim();
   const bookEstimate = formData.get("bookEstimate");
-  const largeCollection = formData.get("largeCollection") === "on" ? "Yes" : "No";
-  const clothingPickup = formData.get("clothingPickup") === "on" ? "Yes" : "No";
+  const largeCollection = checkboxValue("largeCollection");
+  const clothingPickup = checkboxValue("clothingPickup");
+  const ownershipTransferConfirmed = checkboxValue("ownershipTransferConfirmed");
+  const thirdPartyAuthority = checkboxValue("thirdPartyAuthority");
+  const authorityRelationship = formData.get("authorityRelationship").trim();
   const comments = formData.get("comments").trim();
   const message = [
     `Name: ${firstName} ${lastName}`,
@@ -119,6 +147,9 @@ function buildPayload(form) {
     `Estimated Number of Books: ${bookEstimate || "Not provided"}`,
     `Large Collection: ${largeCollection}`,
     `Unwanted Clothing Pickup: ${clothingPickup}`,
+    `Ownership and Transfer Confirmation Checked: ${ownershipTransferConfirmed}`,
+    `Third-Party Authority Checkbox Checked: ${thirdPartyAuthority}`,
+    `Authority / Relationship: ${authorityRelationship || "Not provided"}`,
     "",
     "Comments:",
     comments || "Not provided"
@@ -140,6 +171,10 @@ function buildPayload(form) {
     "Estimated Number of Books": bookEstimate,
     "Large Collection": largeCollection,
     "Unwanted Clothing Pickup": clothingPickup,
+    "Ownership Transfer Confirmed": ownershipTransferConfirmed,
+    "Ownership Confirmation Text": "I confirm that I own, or have authority to dispose of, the books and/or media I am offering to CNY Book Rescue. I understand that any items accepted and picked up by CNY Book Rescue are voluntarily transferred to CNY Book Rescue.",
+    "Third-Party Authority": thirdPartyAuthority,
+    "Authority / Relationship": authorityRelationship,
     Comments: comments
   };
 }
@@ -177,6 +212,11 @@ async function submitPickupRequest(payload) {
 
 if (navToggle && navMenu) {
   navToggle.addEventListener("click", toggleMobileMenu);
+}
+
+if (thirdPartyAuthority) {
+  thirdPartyAuthority.addEventListener("change", syncAuthorityRelationship);
+  syncAuthorityRelationship();
 }
 
 navLinks.forEach((link) => {
@@ -240,6 +280,7 @@ if (pickupForm) {
       await submitPickupRequest(payload);
 
       pickupForm.reset();
+      syncAuthorityRelationship();
       pickupForm.querySelectorAll(".is-invalid").forEach((field) => setFieldError(field, ""));
       successMessage.hidden = false;
       successMessage.scrollIntoView({ behavior: "smooth", block: "center" });
