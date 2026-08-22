@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="CNYBookRescue.Admin.WinForms/CNYBookRescue.Admin.WinForms.csproj" />
+  <Project Path="CNYBookRescue.Core/CNYBookRescue.Core.csproj" />
+  <Project Path="CNYBookRescue.Data/CNYBookRescue.Data.csproj" />
+</Solution>

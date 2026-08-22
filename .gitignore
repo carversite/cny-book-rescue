@@ -1,0 +1,43 @@
+# CNY Book Rescue local/private data
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.bak
+*.backup
+*.log
+*.secret
+*.secrets
+.env
+.env.*
+appsettings.Local.json
+appsettings.*.local.json
+
+# Operational data must stay local
+CNYBookRescue/Data/
+CNYBookRescue/Database/
+CNYBookRescue/Photos/
+CNYBookRescue/Documents/
+CNYBookRescue/Backups/
+CNYBookRescue/Logs/
+CNYBookRescue/Temp/
+CNYBookRescue/Exports/
+OperationalData/
+PrivateData/
+Backups/
+Documents/
+Photos/
+Logs/
+Exports/
+
+# .NET build output
+bin/
+obj/
+*.user
+*.rsuser
+.vs/
+
+# Keep demo/local scratch out unless intentionally added
+clothesExampleSite/
+CListImage
