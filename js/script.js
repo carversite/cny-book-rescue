@@ -30,7 +30,11 @@ const validators = {
     const trimmed = value.trim();
     const zipPattern = /^\d{5}(-\d{4})?$/;
 
-    return !trimmed || zipPattern.test(trimmed) ? "" : "Please enter a valid ZIP code.";
+    if (!trimmed) {
+      return "Please enter your ZIP code.";
+    }
+
+    return zipPattern.test(trimmed) ? "" : "Please enter a valid ZIP code.";
   },
   ownershipTransferConfirmed(value, field) {
     return field.checked ? "" : "Please confirm that you own or have authority to provide these items.";
