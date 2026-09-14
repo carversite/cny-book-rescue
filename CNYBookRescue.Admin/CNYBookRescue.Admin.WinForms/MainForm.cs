@@ -20,7 +20,16 @@ public sealed class MainForm : Form
 
     private readonly TabControl _tabs = new() { Dock = DockStyle.Fill };
     private readonly DataGridView _dashboardRecent = Grid();
-    private readonly Label _dashboardCounts = new() { Dock = DockStyle.Top, AutoSize = false, Height = 150, Padding = new Padding(12), Font = new Font("Segoe UI", 10F) };
+    private readonly TextBox _dashboardCounts = new()
+    {
+        Dock = DockStyle.Fill,
+        Multiline = true,
+        ReadOnly = true,
+        BorderStyle = BorderStyle.None,
+        ScrollBars = ScrollBars.Vertical,
+        Font = new Font("Segoe UI", 10F),
+        BackColor = SystemColors.Control
+    };
     private readonly DataGridView _pickupsGrid = Grid();
     private readonly DataGridView _inventoryGrid = Grid();
     private readonly DataGridView _auditGrid = Grid();
@@ -77,11 +86,31 @@ public sealed class MainForm : Form
     private void BuildDashboardTab()
     {
         var tab = Page("Dashboard");
+        var layout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 3
+        };
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 178));
+        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+        var header = new Panel { Dock = DockStyle.Fill };
         var refresh = Button("Refresh", (_, _) => LoadDashboard());
+        refresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        refresh.Location = new Point(header.Width - refresh.Width - 8, 6);
+        header.Resize += (_, _) => refresh.Location = new Point(header.Width - refresh.Width - 8, 6);
+        header.Controls.Add(refresh);
+
+        var summaryPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(12, 4, 12, 8) };
+        summaryPanel.Controls.Add(_dashboardCounts);
+
         _dashboardRecent.DoubleClick += (_, _) => OpenRecentPickup();
-        tab.Controls.Add(_dashboardRecent);
-        tab.Controls.Add(refresh);
-        tab.Controls.Add(_dashboardCounts);
+        layout.Controls.Add(header, 0, 0);
+        layout.Controls.Add(summaryPanel, 0, 1);
+        layout.Controls.Add(_dashboardRecent, 0, 2);
+        tab.Controls.Add(layout);
         _tabs.TabPages.Add(tab);
     }
 
@@ -117,7 +146,7 @@ public sealed class MainForm : Form
     private void BuildInventoryTab()
     {
         var tab = Page("Inventory");
-        var toolbar = Bar(76);
+        var toolbar = Bar(116);
         toolbar.Controls.Add(Label("Search"));
         toolbar.Controls.Add(_inventorySearch);
         toolbar.Controls.Add(Label("Disposition"));

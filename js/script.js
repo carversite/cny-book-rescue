@@ -41,6 +41,16 @@ const validators = {
   }
 };
 
+function normalizeZipCode(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 9);
+
+  if (digits.length <= 5) {
+    return digits;
+  }
+
+  return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+}
+
 if (currentYear) {
   currentYear.textContent = new Date().getFullYear();
 }
@@ -96,6 +106,10 @@ function setFieldError(field, message) {
 }
 
 function validateField(field) {
+  if (field.name === "zipCode") {
+    field.value = normalizeZipCode(field.value);
+  }
+
   const validator = validators[field.name];
   const message = validator ? validator(field.value, field) : "";
 
@@ -114,6 +128,23 @@ function validateForm(form) {
   });
 
   return isValid;
+}
+
+function showValidationSummary(form) {
+  const firstInvalidField = form.querySelector(".is-invalid");
+  const firstError = firstInvalidField
+    ? document.querySelector(`#${firstInvalidField.id}-error`)?.textContent.trim()
+    : "";
+
+  errorMessage.textContent = firstError
+    ? `Please fix the highlighted field: ${firstError}`
+    : "Please fix the highlighted fields before submitting your pickup request.";
+  errorMessage.hidden = false;
+  errorMessage.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  if (firstInvalidField) {
+    firstInvalidField.focus({ preventScroll: true });
+  }
 }
 
 function syncAuthorityRelationship() {
@@ -142,7 +173,7 @@ function buildPayload(form) {
   const email = formData.get("email").trim();
   const cellNumber = formData.get("cellNumber").trim();
   const cityTown = formData.get("cityTown").trim();
-  const zipCode = formData.get("zipCode").trim();
+  const zipCode = normalizeZipCode(formData.get("zipCode").trim());
   const bookEstimate = formData.get("bookEstimate");
   const largeCollection = checkboxValue("largeCollection");
   const clothingPickup = checkboxValue("clothingPickup");
@@ -279,6 +310,10 @@ document.addEventListener("keydown", (event) => {
 if (pickupForm) {
   pickupForm.querySelectorAll("input, select, textarea").forEach((field) => {
     field.addEventListener("input", () => {
+      if (field.name === "zipCode") {
+        field.value = normalizeZipCode(field.value);
+      }
+
       if (validators[field.name]) {
         validateField(field);
       }
@@ -297,12 +332,7 @@ if (pickupForm) {
     errorMessage.hidden = true;
 
     if (!validateForm(pickupForm)) {
-      const firstInvalidField = pickupForm.querySelector(".is-invalid");
-
-      if (firstInvalidField) {
-        firstInvalidField.focus();
-      }
-
+      showValidationSummary(pickupForm);
       return;
     }
 
