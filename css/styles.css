@@ -620,6 +620,102 @@ h3 {
   font-weight: 900;
 }
 
+.book-journey-section {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--cream);
+}
+
+.book-journey-intro {
+  max-width: 860px;
+  text-align: center;
+}
+
+.journey-lead {
+  margin: 1.2rem 0 0;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
+.journey-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 2rem;
+  color: var(--forest);
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.journey-flow span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  padding: 0.55rem 0.9rem;
+}
+
+.journey-flow b {
+  color: var(--clay);
+  font-size: 1.3rem;
+}
+
+.journey-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.journey-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  padding: clamp(1.25rem, 2.5vw, 1.8rem);
+  box-shadow: var(--shadow);
+}
+
+.journey-card h3 {
+  margin-top: 0.9rem;
+}
+
+.journey-card p {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+}
+
+.journey-tag {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  border-radius: 999px;
+  background: rgba(111, 143, 99, 0.16);
+  color: var(--forest);
+  padding: 0.32rem 0.65rem;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.journey-note {
+  margin-top: 1.5rem;
+  border-left: 4px solid var(--clay);
+  border-radius: var(--radius);
+  background: var(--white);
+  padding: clamp(1.2rem, 2.5vw, 1.6rem);
+}
+
+.journey-note p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.journey-note .ai-note {
+  margin-top: 0.8rem;
+  color: var(--forest-dark);
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-weight: 700;
+}
+
 .service-area {
   padding: clamp(3rem, 7vw, 5rem) 0;
   background: var(--forest);
@@ -995,8 +1091,13 @@ textarea:focus {
   .accept-list,
   .steps-grid,
   .benefits-grid,
+  .journey-grid,
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .journey-flow {
+    flex-wrap: wrap;
   }
 
   .service-area-inner {
